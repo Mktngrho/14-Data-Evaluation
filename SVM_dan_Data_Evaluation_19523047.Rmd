@@ -1,0 +1,92 @@
+---
+html_document: null
+author: "Muchammad Okto Nugroho 19523047"
+df_print: paged
+title: "SVM dan Data Evaluation"
+---
+
+
+```{r}
+head(mtcars)
+```
+
+```{r}
+y <- factor(rep(c(0,1), each=16))
+y
+```
+
+```{r}
+x <-  subset(mtcars, select = c(drat, wt))
+x
+```
+
+```{r}
+x[y == 1, ] <- x[y == 1, ] + 1
+x
+```
+
+```{r}
+mtcars <- data.frame(x,y)
+head(mtcars)
+```
+
+```{r}
+plot(mtcars$wt,mtcars$drat, col = ifelse(y=="1", "green", "orange"), pch = 19)
+```
+
+```{r}
+library(e1071)
+```
+
+```{r}
+modelSVM1 <- svm(y ~ ., data = mtcars, kernel = "linear")
+```
+
+```{r}
+print(modelSVM1)
+```
+
+```{r}
+plot(modelSVM1, mtcars)
+```
+
+#cross Validation_19523047
+
+
+```{r}
+library(caret)
+```
+
+
+```{r}
+train_control <- trainControl(method="cv", number=10)
+
+modelSVM2 <- train(y ~., data = mtcars, method = "svmLinear", trControl = train_control)
+
+modelSVM2$resample
+confusionMatrix(modelSVM2)
+```
+
+#Repeated K-Fold Cross Validation_195239047
+
+
+```{r}
+train_control <- trainControl(method="repeatedcv", number=10, repeats=5)
+
+modelSVM2 <- train(y ~., data = mtcars, method = "svmLinear", trControl = train_control)
+
+modelSVM2$resample
+confusionMatrix(modelSVM2)
+```
+#Leave-One-Out cross validation (LOOCV)_19523047
+
+
+```{r}
+train_control <- trainControl(method="LOOCV")
+
+modelSVM2 <- train(y ~., data = mtcars, method = "svmLinear", trControl = train_control)
+
+modelSVM2$results
+```
+
+
